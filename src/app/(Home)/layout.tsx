@@ -15,7 +15,6 @@ export default function RootLayout({
       <body
         className={`${dmSans.variable} antialiased`}
       >
-        <Navbar />
         {children}
       </body>
     </html>
