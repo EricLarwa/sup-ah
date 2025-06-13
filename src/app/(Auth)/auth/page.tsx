@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { signInWithOauth, handleLogin, handleLogout, getCurrentUser, handleSignUp  } from "./utils/authUtil"
 import { useRouter } from "next/navigation";
 
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/client";
 
 export default function AuthPage() {
     const [email, setEmail] = useState("");
@@ -22,7 +22,7 @@ export default function AuthPage() {
 
             const testConnection = async () => {
                 try {
-                    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+                    const supabase = createClient();
                     const { data, error } = await supabase.auth.getSession()
                     console.log('Supabase connection test:', data, error);
                 } catch (error) {
@@ -41,7 +41,7 @@ export default function AuthPage() {
             }
             checkUser();
         };
-        runAsync();
+        runAsync().finally(() => setIsLoading(false));
     }, [])
 
     const handleSubmit = async (e: React.FormEvent) => {

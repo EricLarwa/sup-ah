@@ -1,6 +1,6 @@
-{/* Login and signup utility functions */} 
+// Login and signup utility functions
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/client';
 
 export interface AuthResponse {
     success?: boolean;
@@ -9,7 +9,7 @@ export interface AuthResponse {
 }
 
 export async function handleSignUp(email: string, password: string): Promise<AuthResponse> {
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
+    const supabase = createClient();
 
     const { data, error } = await supabase.auth.signUp({
         email,
@@ -24,10 +24,7 @@ export async function handleSignUp(email: string, password: string): Promise<Aut
 }
 
 export async function handleLogin(email: string, password: string): Promise<AuthResponse> {
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = createClient();
 
     const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -42,10 +39,7 @@ export async function handleLogin(email: string, password: string): Promise<Auth
 }
 
 export async function handleLogout(): Promise<AuthResponse> {
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = createClient();
 
     const { error } = await supabase.auth.signOut();
 
@@ -57,10 +51,7 @@ export async function handleLogout(): Promise<AuthResponse> {
 }
 
 export async function getCurrentUser(): Promise<AuthResponse> {
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = createClient();
 
     const { data: { user }, error } = await supabase.auth.getUser();
 
@@ -72,10 +63,7 @@ export async function getCurrentUser(): Promise<AuthResponse> {
 }
 
 export async function signInWithOauth(provider: 'google' ): Promise<AuthResponse> {
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = createClient();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
@@ -92,11 +80,8 @@ export async function signInWithOauth(provider: 'google' ): Promise<AuthResponse
 }
 
 export async function resetPassword(email: string): Promise<AuthResponse> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-  
+  const supabase = createClient();
+
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${window.location.origin}/auth/reset-password`
   })
@@ -109,11 +94,8 @@ export async function resetPassword(email: string): Promise<AuthResponse> {
 }
 
 export async function updatePassword(newPassword: string): Promise<AuthResponse> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-  
+  const supabase = createClient();
+
   const { data, error } = await supabase.auth.updateUser({
     password: newPassword
   })
