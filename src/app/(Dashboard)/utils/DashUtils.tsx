@@ -11,7 +11,7 @@ export function calculateStats(readings: Reading[]) {
     if (readings.length === 0) {
         return {
             latestReading: null,
-            averageReading: null,
+            avgReading: null,
             readingsCount: 0,
             normalPercent: 0,
             highPercent: 0,

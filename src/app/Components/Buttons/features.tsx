@@ -1,7 +1,7 @@
 "use client"
 
-{/* Features Dropdown*/}
-{/* UI Component -- Dropdown menu displaying web features */}
+// Features Dropdown
+// UI Component -- Dropdown menu displaying web features 
 
 import { Dispatch, SetStateAction, useState } from 'react';
 

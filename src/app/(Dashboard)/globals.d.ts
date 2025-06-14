@@ -9,7 +9,7 @@ interface Reading {
 
 interface Stats {
     latestReading: number | null;
-    averageReading: number | null;
+    avgReading: number | null;
     readingsCount: number;
     normalPercent: number;
     highPercent: number;
