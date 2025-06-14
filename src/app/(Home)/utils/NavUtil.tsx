@@ -1,3 +1,5 @@
+"use client"
+
 import SignUp from "@/app/Components/Buttons/sign-up"
 import Login from "@/app/Components/Buttons/login"
 

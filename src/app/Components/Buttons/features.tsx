@@ -3,26 +3,26 @@
 {/* Features Dropdown*/}
 {/* UI Component -- Dropdown menu displaying web features */}
 
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
+type TabType = 'track' | 'log' | 'stats';
 
-const Features = () => {
+interface FeaturesProps {
+    setActiveTab: Dispatch<SetStateAction<TabType>>;
+}
+
+const Features = ({ setActiveTab }: FeaturesProps) => {
     const [dropDown, setDropDown] = useState(false);
-    const [features] = useState([
-        { name: 'Logging', description: 'Description of Logging' },
-        { name: 'Feature 2', description: 'Description of Feature 2' },
-        { name: 'Feature 3', description: 'Description of Feature 3' }
-    ]);
+    const features = [
+        { name: 'Logging', description: 'Description of Logging', tab: 'log' },
+        { name: 'Tracking', description: 'Description of Tracking', tab: 'track' },
+        { name: 'Stats', description: 'Description of Stats', tab: 'stats' }
+    ];
     
     const toggleDropDown = () => {
         setDropDown(prev => {
             const next = !prev;
             document.body.style.overflow = next ? 'hidden' : '';
-            if (next) {
-                features.forEach(feature => {
-                    console.log(`Feature: ${feature.name}, Description: ${feature.description}`);
-                });
-            }
             return next;
         });
     };
@@ -39,8 +39,16 @@ const Features = () => {
                 <div className="absolute left-0 mt-2 w-56 bg-white border border-black rounded-md shadow-lg z-10">
                     <ul>
                         {features.map((feature, idx) => (
-                            <li key={idx} className="px-4 py-2 hover:bg-gray-100">
-                                <div className="font-bold">{feature.name}</div>
+                            <li
+                                key={idx}
+                                className="px-4 py-2 rounded-md hover:bg-gray-100 cursor-pointer"
+                                onClick={() => {
+                                    setActiveTab(feature.tab as TabType);
+                                    setDropDown(false);
+                                    document.body.style.overflow = '';
+                                }}
+                            >
+                                <div className="font-bold text-black">{feature.name}</div>
                                 <div className="text-sm text-gray-600">{feature.description}</div>
                             </li>
                         ))}
@@ -48,8 +56,7 @@ const Features = () => {
                 </div>
             )}
         </div>
-    )
-
-}
+    );
+};
 
 export default Features;
