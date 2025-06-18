@@ -10,6 +10,7 @@ export interface AuthResponse {
 
 export async function handleSignUp(email: string, password: string): Promise<AuthResponse> {
     const supabase = createClient();
+    console.log('Attempting sign-up with email:', email);
 
     const { data, error } = await supabase.auth.signUp({
         email,
@@ -31,8 +32,10 @@ export async function handleLogin(email: string, password: string): Promise<Auth
         password,
     });
 
+    console.log('Login response:', data, error);
+
     if (error) {
-        return { error: error.message };
+        return { success: false, error: error.message };
     }
 
     return { success: true, user: data.user };
