@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, use } from 'react'
+import { useSearchParams } from "next/navigation";
 
 import { calculateStats, getGlucoseCategory } from '../utils/DashUtils';
 import DashNav from '../utils/DashNav'
@@ -15,7 +16,9 @@ import { Session } from '@supabase/supabase-js'
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
 
 export default function Dashboard() {
-    const [activeTab, setActiveTab] = useState<'track' | 'log' | 'stats'>('track');
+    const searchParams = useSearchParams();
+    const initialTab = (searchParams.get("tab") as 'track' | 'log' | 'stats') || 'track';
+    const [activeTab, setActiveTab] = useState<'track' | 'log' | 'stats'>(initialTab);
     const [readings, setReadings] = useState<Reading[]>([]);
     const [glucoseInput, setGlucoseInput] = useState<string>('');
     const [notesInput, setNotesInput] = useState<string>('');

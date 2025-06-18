@@ -3,7 +3,10 @@
 // Features Dropdown
 // UI Component -- Dropdown menu displaying web features 
 
+import Link from "next/link";
 import { Dispatch, SetStateAction, useState } from 'react';
+
+import { useRouter } from "next/navigation";
 
 type TabType = 'track' | 'log' | 'stats';
 
@@ -18,11 +21,16 @@ const Features = ({ setActiveTab }: FeaturesProps) => {
         { name: 'Tracking', description: 'Description of Tracking', tab: 'track' },
         { name: 'Stats', description: 'Description of Stats', tab: 'stats' }
     ];
-    
+
+    const router = useRouter();
+
     const toggleDropDown = () => {
         setDropDown(prev => {
             const next = !prev;
             document.body.style.overflow = next ? 'hidden' : '';
+            if(next) {
+                router.push('/dashboard?tab=track');
+            }
             return next;
         });
     };

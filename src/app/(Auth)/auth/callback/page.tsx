@@ -9,6 +9,8 @@ export default function AuthCallback() {
   const [status, setStatus] = useState('loading');
 
   useEffect(() => {
+    let timeoutID: NodeJS.Timeout | null = null;
+
     const handleAuthCallback = async () => {
       try {
         const supabase = createClient();
@@ -25,11 +27,10 @@ export default function AuthCallback() {
         if (data.session) {
           // User is now confirmed and logged in
           setStatus('success');
-          setTimeout(() => {
+          timeoutID = setTimeout(() => {
             router.push('/dashboard');
           }, 2000);
         } else {
-          // Something went wrong
           setStatus('error');
         }
       } catch (error) {
@@ -39,6 +40,13 @@ export default function AuthCallback() {
     };
 
     handleAuthCallback();
+
+    return () => {
+      if (timeoutID) {
+        clearTimeout(timeoutID);
+      }
+    };
+    
   }, [router]);
 
   const getStatusMessage = () => {
