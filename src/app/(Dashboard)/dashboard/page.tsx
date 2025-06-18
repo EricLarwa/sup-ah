@@ -1,12 +1,16 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 
 import { calculateStats, getGlucoseCategory } from '../utils/DashUtils';
 import DashNav from '../utils/DashNav'
 
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Line as ChartLine, Bar } from 'react-chartjs-2';
+
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/client';
+import { Session } from '@supabase/supabase-js'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
 
@@ -17,27 +21,44 @@ export default function Dashboard() {
     const [notesInput, setNotesInput] = useState<string>('');
     const [timeSelect, setTimeSelect] = useState<string>('FASTING')
 
+    const [userId, setUserId] = useState<string | null>(null);
+
+    const router = useRouter();
+
+    // Check authentication on mount and get user id
     useEffect(() => {
-        const sampleReadings: Reading[] = [
-            {
-                id: 1,
-                glucose: 120,
-                time: 'FASTING',
-                notes: 'Feeling good',
-                timestamp: new Date(),
-                category: 'normal'
-            },
-            {
-                id: 2,
-                glucose: 150,
-                time: 'AFTER MEAL',
-                notes: 'Had lunch',
-                timestamp: new Date(),
-                category: 'normal'
+        const checkAuth = async () => {
+            const supabase = createClient();
+            const { data, error } = await supabase.auth.getSession();
+            if (error || !data.session) {
+                router.push('/auth');
+            } else {
+                setUserId(data.session.user.id);
             }
-        ];
-        setReadings(sampleReadings);
-    }, []);
+        }
+        checkAuth();
+    }, [router]);
+
+    // Fetch readings from Supabase for this user
+    useEffect(() => {
+        if (!userId) return;
+        const fetchReadings = async () => {
+            const supabase = createClient();
+            const { data, error } = await supabase
+                .from('readings')
+                .select('*')
+                .eq('user_id', userId)
+                .order('timestamp', { ascending: false });
+            if (!error && data) {
+                setReadings(data.map((r: any) => ({
+                    ...r,
+                    timestamp: new Date(r.timestamp),
+                    category: getGlucoseCategory(r.glucose)
+                })));
+            }
+        };
+        fetchReadings();
+    }, [userId]);
 
     const stats = calculateStats(readings);
 
@@ -45,7 +66,7 @@ export default function Dashboard() {
         setGlucoseInput(value.toString());
     }
 
-    const handleAddReading = () => {
+    const handleAddReading = async () => {
         const glucose = parseInt(glucoseInput);
 
         if(!glucose || isNaN(glucose)) {
@@ -57,19 +78,34 @@ export default function Dashboard() {
             alert('Please contact your doctor if you are experiencing glucose levels outside of the recommended range.');
         }
 
-        const newReading: Reading = {
-            id: Date.now(),
-            glucose, 
+        if (!userId) return;
+
+        const newReading = {
+            glucose,
             time: timeSelect,
             notes: notesInput,
-            timestamp: new Date(),
-            category: getGlucoseCategory(glucose)
-        }
+            timestamp: new Date().toISOString(),
+            user_id: userId
+        };
 
-        setReadings(prev => [newReading, ...prev]);
-        
-        setGlucoseInput('');
-        setNotesInput('');
+        const supabase = createClient();
+        const { data, error } = await supabase
+            .from('readings')
+            .insert([newReading])
+            .select()
+            .single();
+
+        if (!error && data) {
+            setReadings(prev => [{
+                ...data,
+                timestamp: new Date(data.timestamp),
+                category: getGlucoseCategory(data.glucose)
+            }, ...prev]);
+            setGlucoseInput('');
+            setNotesInput('');
+        } else {
+            alert('Failed to add reading.');
+        }
     }
 
     const handleDeleteReading = (id: number) => {
