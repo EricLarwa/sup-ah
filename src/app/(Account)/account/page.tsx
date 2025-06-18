@@ -1,9 +1,12 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Shield, Palette, Clock, User, Database } from 'lucide-react';
 
 import DashNav from "@/app/(Dashboard)/utils/DashNav";
+import { createClient } from '@/lib/client';
+
+const supabase = createClient();
 
 interface UserProfile {
   name: string;
@@ -18,16 +21,35 @@ interface UserProfile {
 
 const Profile: React.FC = () => {
     const [profile, setProfile] = useState<UserProfile>({
-        name: 'Alex Johnson',
-        email: 'alex.johnson@email.com',
-        age: 32,
-        diabetesType: '2',
-        diagnosisDate: '2020-03-15',
-        medications: ['Metformin', 'Insulin'],
-        doctor: 'Dr. Sarah Wilson',
-        emergencyContact: '+1 (555) 123-4567'
+        name: '',
+        email: '',
+        age: 0,
+        diabetesType: '1',
+        diagnosisDate: '',
+        medications: [],
+        doctor: '',
+        emergencyContact: ''
     });
 
+    // Fetch profile from Supabase on mount
+    useEffect(() => {
+        async function fetchProfile() {
+            // Get current user
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            // Fetch profile data
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+
+            if (data) setProfile(data as UserProfile);
+            // Optionally handle error
+        }
+        fetchProfile();
+    }, []);
         
     const [activeTab, setActiveTab] = useState<'track' | 'log' | 'stats'>('track');
     const [isEditing, setIsEditing] = useState(false);
@@ -73,7 +95,12 @@ const Profile: React.FC = () => {
                         <input
                         type="text"
                         value={profile.name}
-                        onChange={(e) => handleProfileChange('name', e.target.value)}
+                        onChange={(e) => {
+                            const value = parseInt(e.target.value)
+                            if (!isNaN(value)) {
+                                handleProfileChange('name', e.target.value);
+                            }
+                        }}
                         disabled={!isEditing}
                         className={`w-full p-4 border-3 border-black font-mono text-lg font-bold focus:outline-none focus:shadow-[4px_4px_0px_black] ${isEditing ? 'bg-white' : 'bg-gray-100'}`}
                         />

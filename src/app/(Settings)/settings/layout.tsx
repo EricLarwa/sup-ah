@@ -7,8 +7,8 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Logging",
-  description: "Create and manage logs easily",
+  title: "Settings",
+  description: "Configure your application preferences and settings",
 };
 
 export default function RootLayout({

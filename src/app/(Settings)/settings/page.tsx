@@ -1,8 +1,9 @@
 "use client";
 
 import DashNav from "@/app/(Dashboard)/utils/DashNav";
+import { createClient } from '@/lib/client'; // already in your workspace
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Bell, Download, Target} from "lucide-react";
 
 interface Settings {
@@ -85,7 +86,12 @@ const SettingsPage = () => {
                                 </label>
                                 <select
                                     value={settings.glucoseUnit}
-                                    onChange={(e) => handleSettingChange('glucoseUnit', e.target.value)}
+                                    onChange={(e) => {
+                                        const value = parseInt(e.target.value);
+                                        if(!isNaN(value)) {
+                                            handleSettingChange('glucoseUnit', e.target.value as 'mg/dL' | 'mmol/L');
+                                        }
+                                    }}
                                     className="w-full p-4 border-3 border-black bg-white font-mono text-lg font-bold focus:outline-none focus:shadow-[4px_4px_0px_black]"
                                 >
                                     <option value="mg/dL">mg/dL</option>
