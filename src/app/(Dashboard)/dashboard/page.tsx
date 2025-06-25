@@ -152,10 +152,13 @@ export default function Dashboard() {
             <DashNav activeTab={activeTab} setActiveTab={setActiveTab} />
             <div className="max-w-full mx-auto p-5 bg-[#f5eddf] min-h-screen">
                 <div className="flex flex-col md:flex-row gap-8 mb-8">
+                    
                     {/* Logging Section */}
                     {activeTab === 'log' && (
                         <div className="flex-1">
-                            <h1 className="text-3xl font-black text-black mb-6">Logging</h1>
+                            <div className="w-full bg-black text-white p-5 mb-8 border-4 border-black shadow-[8px_8px_0px_#333]">
+                                <h1 className="text-4xl font-black uppercase tracking-wider">LOGGING</h1>
+                            </div>
                             <div className="bg-[#B8FF9F] border-4 border-black p-8 mb-8 md:mb-0 shadow-[8px_8px_0px_black] w-full">
                                 <h2 className="text-2xl font-bold mb-4 text-black">Log Your Blood Sugar</h2>
 
@@ -227,7 +230,7 @@ export default function Dashboard() {
 
                     {/* Stats Section (sidebar) */}
                     <div className="md:w-1/3 w-full">
-                        <div className="grid grid-cols-1 mt-15 text-black gap-5">
+                        <div className="grid grid-cols-1 mt-30 text-black gap-5">
                             <div className="bg-[#B8FF9F] border-4 border-black p-6 shadow-[6px_6px_0px_black]">
                                 <div className="text-4xl font-black mb-1">
                                     {stats.latestReading !== null
@@ -262,7 +265,9 @@ export default function Dashboard() {
                         <div className="w-full flex flex-col items-center md:justify-center md:items-start">
                             <div className="w-full flex justify-center">
                                 <div className="max-w-3xl w-full">
-                                    <h1 className="text-3xl font-black text-black mb-6">Track</h1>
+                                    <div className="bg-black text-white p-5 mb-8 border-4 border-black shadow-[8px_8px_0px_#333]">
+                                        <h1 className="text-4xl font-black uppercase tracking-wider">TRACKING</h1>
+                                    </div>
                                     <div className="bg-white border-4 border-black p-8 mb-8 shadow-[8px_8px_0px_black] w-full">
                                         <div className="h-64">
                                             <ChartLine
@@ -359,49 +364,9 @@ export default function Dashboard() {
                     {activeTab === 'stats' && (
                         <div className="w-full flex justify-center">
                             <div className="max-w-4xl w-full">
-                                <h1 className="text-3xl font-black text-black mb-6">Stats</h1>
-                                {/* Stats Grid */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8 text-black">
-                                    <div className="bg-[#ba9fff] border-4 border-black p-6 shadow-[6px_6px_0px_black]">
-                                    <div className="text-4xl font-black mb-1">
-                                        {stats.normalPercent}%
-                                    </div>
-                                    <div className="text-sm font-bold uppercase tracking-wide flex items-center">
-                                        <span className="inline-block w-3 h-3 bg-[#ba9fff] border-2 border-black mr-2"></span>
-                                        IN RANGE %
-                                    </div>
-                                    </div>
-                                    
-                                    <div className="bg-[#FFB8B8] border-4 border-black p-6 shadow-[6px_6px_0px_black]">
-                                    <div className="text-4xl font-black mb-1">
-                                        {stats.highPercent}%
-                                    </div>
-                                    <div className="text-sm font-bold uppercase tracking-wide flex items-center">
-                                        <span className="inline-block w-3 h-3 bg-[#FFB8B8] border-2 border-black mr-2"></span>
-                                        HIGH %
-                                    </div>
-                                    </div>
-                                    
-                                    <div className="bg-[#A6FAFF] border-4 border-black p-6 shadow-[6px_6px_0px_black]">
-                                    <div className="text-4xl font-black mb-1">
-                                        {stats.lowPercent}%
-                                    </div>
-                                    <div className="text-sm font-bold uppercase tracking-wide flex items-center">
-                                        <span className="inline-block w-3 h-3 bg-[#A6FAFF] border-2 border-black mr-2"></span>
-                                        LOW %
-                                    </div>
-                                    </div>
-                                    
-                                    <div className="bg-[#B8FF9F] border-4 border-black p-6 shadow-[6px_6px_0px_black]">
-                                    <div className="text-4xl font-black mb-1">
-                                        {stats.avgGlucose}
-                                    </div>
-                                    <div className="text-sm font-bold uppercase tracking-wide">
-                                        AVERAGE GLUCOSE
-                                    </div>
-                                    </div>
+                                <div className="bg-black text-white p-5 mb-8 border-4 border-black shadow-[8px_8px_0px_#333]">
+                                    <h1 className="text-4xl font-black uppercase tracking-wider">STATISTICS</h1>
                                 </div>
-
                                 {/* Trends Chart */}
                                 <div className="bg-white border-4 border-black p-8 shadow-[8px_8px_0px_black]">
                                     <h2 className="text-xl font-black text-black uppercase mb-5">GLUCOSE TRENDS</h2>
@@ -453,11 +418,50 @@ export default function Dashboard() {
                                     />
                                     </div>
                                 </div>
+                                {/* Stats Grid */}
+                                <div className="grid grid-cols-1 mt-10 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8 text-black">
+                                    <div className="bg-[#ba9fff] border-4 border-black p-6 shadow-[6px_6px_0px_black]">
+                                    <div className="text-4xl font-black mb-1">
+                                        {stats.normalPercent}%
+                                    </div>
+                                    <div className="text-sm font-bold uppercase tracking-wide flex items-center">
+                                        <span className="inline-block w-3 h-3 bg-[#ba9fff] border-2 border-black mr-2"></span>
+                                        IN RANGE %
+                                    </div>
+                                    </div>
+                                    
+                                    <div className="bg-[#FFB8B8] border-4 border-black p-6 shadow-[6px_6px_0px_black]">
+                                    <div className="text-4xl font-black mb-1">
+                                        {stats.highPercent}%
+                                    </div>
+                                    <div className="text-sm font-bold uppercase tracking-wide flex items-center">
+                                        <span className="inline-block w-3 h-3 bg-[#FFB8B8] border-2 border-black mr-2"></span>
+                                        HIGH %
+                                    </div>
+                                    </div>
+                                    
+                                    <div className="bg-[#A6FAFF] border-4 border-black p-6 shadow-[6px_6px_0px_black]">
+                                    <div className="text-4xl font-black mb-1">
+                                        {stats.lowPercent}%
+                                    </div>
+                                    <div className="text-sm font-bold uppercase tracking-wide flex items-center">
+                                        <span className="inline-block w-3 h-3 bg-[#A6FAFF] border-2 border-black mr-2"></span>
+                                        LOW %
+                                    </div>
+                                    </div>
+                                    
+                                    <div className="bg-[#B8FF9F] border-4 border-black p-6 shadow-[6px_6px_0px_black]">
+                                    <div className="text-4xl font-black mb-1">
+                                        {stats.avgGlucose}
+                                    </div>
+                                    <div className="text-sm font-bold uppercase tracking-wide">
+                                        AVERAGE GLUCOSE
+                                    </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )}
-
-
                 </div>
             </div>
         </>

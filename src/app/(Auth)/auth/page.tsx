@@ -89,15 +89,18 @@ export default function AuthPage() {
     }
 
     if (user) {
+        const timeoutId = setTimeout(() => {
+            router.push("/dashboard");
+        }, 2000);
         return (
             <div className="min-h-screen flex items-center justify-center bg-amber-100 py-12 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-md w-full space-y-8">
+                <div className="max-w-md border-4 border-black bg-white w-full space-y-8">
                     <div className="text-center">
                         <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Welcome</h2>
                         <p className="mt-2 text-sm text-gray-600">You are logged in.</p>
                         <button
                             onClick={handleSignOut}
-                            className="mt-4 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" >
+                            className="mt-4 mb-2 w-full flex border-black border-4 justify-center py-2 px-4 shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 cursor-pointer" >
                             Sign Out
                         </button>
                     </div>

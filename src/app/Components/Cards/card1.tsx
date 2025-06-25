@@ -16,7 +16,7 @@ const Card = ({ img, title, description, link, features}: CardProps) => {
                         <img 
                         src={img}
                         alt="thumbnail"
-                        className="w-full h-full object-cover rounded-t-md"
+                        className="w-300 h-60 object-cover rounded-t-md"
                         />
                     </figure>
                     <div className="px-6 py-5 text-left h-full text-black">
@@ -29,7 +29,6 @@ const Card = ({ img, title, description, link, features}: CardProps) => {
                                 </li>
                             ))}
                         </ul>
-                        <strong>Read More</strong>
                     </div>
                 </article>
             </a>
