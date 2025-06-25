@@ -28,11 +28,12 @@ const Features = ({ setActiveTab }: FeaturesProps) => {
         setDropDown(prev => {
             const next = !prev;
             document.body.style.overflow = next ? 'hidden' : '';
-            if(next) {
-                router.push('/dashboard?tab=track');
-            }
             return next;
         });
+        // Only push if opening the dropdown
+        if (!dropDown) {
+            router.push('/dashboard?tab=track');
+        }
     };
 
     return (

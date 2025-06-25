@@ -11,10 +11,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <body
+      <div
         className={`${dmSans.variable} antialiased`}
       >
         {children}
-      </body>
+      </div>
   );
 }

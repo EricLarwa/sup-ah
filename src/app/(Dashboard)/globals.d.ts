@@ -16,3 +16,16 @@ interface Stats {
     lowPercent: number;
     avgGlucose: number;
 }
+
+interface Settings {
+    glucoseUnit: 'mg/dL' | 'mmol/L';
+    lowThreshold: number;
+    highThreshold: number;
+    reminderEnabled: boolean;
+    reminderTime: string[];
+    themeColor: string;
+    notificationEnabled: boolean;
+    biometricLogin: boolean;
+    autoBackupEnabled: boolean;
+    dataRetention: '1year' | '2years' | '5years' | 'indefinite';
+}

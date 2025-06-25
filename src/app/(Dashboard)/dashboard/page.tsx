@@ -15,6 +15,12 @@ import { Session } from '@supabase/supabase-js'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
 
+function displayGlucose(value: number, unit: 'mg/dL' | 'mmol/L') {
+    return unit === 'mmol/L'
+        ? (value / 18).toFixed(1) // 1 mmol/L = 18 mg/dL
+        : value;
+}
+
 export default function Dashboard() {
     const searchParams = useSearchParams();
     const initialTab = (searchParams.get("tab") as 'track' | 'log' | 'stats') || 'track';
@@ -25,10 +31,11 @@ export default function Dashboard() {
     const [timeSelect, setTimeSelect] = useState<string>('FASTING')
 
     const [userId, setUserId] = useState<string | null>(null);
+    const [preferences, setPreferences] = useState<Settings | null>(null);
 
     const router = useRouter();
 
-    // Check authentication on mount and get user id
+    // Check auth on mount
     useEffect(() => {
         const checkAuth = async () => {
             const supabase = createClient();
@@ -61,6 +68,20 @@ export default function Dashboard() {
             }
         };
         fetchReadings();
+    }, [userId]);
+
+    useEffect(() => {
+        if (!userId) return;
+        const fetchPreferences = async () => {
+            const supabase = createClient();
+            const { data } = await supabase
+                .from('user_preferences')
+                .select('*')
+                .eq('user_id', userId)
+                .single();
+            if (data) setPreferences(data);
+        };
+        fetchPreferences();
     }, [userId]);
 
     const stats = calculateStats(readings);
@@ -140,7 +161,7 @@ export default function Dashboard() {
 
                                 <div className="flex flex-col gap-4  mb-5">
                                     <div className='flex-1 min-w-[150px]'>
-                                        <label className="block text-black font-bold mb-2">Glucose Level (mg/dL)</label>
+                                        <label className="block text-black font-bold mb-2">Glucose Level</label>
                                         <input
                                             type="number"
                                             value={glucoseInput}
@@ -209,10 +230,12 @@ export default function Dashboard() {
                         <div className="grid grid-cols-1 mt-15 text-black gap-5">
                             <div className="bg-[#B8FF9F] border-4 border-black p-6 shadow-[6px_6px_0px_black]">
                                 <div className="text-4xl font-black mb-1">
-                                    {stats.latestReading || '--'}
+                                    {stats.latestReading !== null
+                                        ? displayGlucose(stats.latestReading, preferences?.glucoseUnit || 'mg/dL')
+                                        : '--'}
                                 </div>
                                 <div className="text-sm font-bold text-black uppercase tracking-wide">
-                                    LATEST READING
+                                    LATEST READING ({preferences?.glucoseUnit || 'mg/dL'})
                                 </div>
                             </div>
                             <div className="bg-[#A6FAFF] border-4 border-black p-6 shadow-[6px_6px_0px_black]">
@@ -311,7 +334,7 @@ export default function Dashboard() {
                                             >
                                                 <div>
                                                     <div className="text-2xl font-black mb-1">
-                                                        {reading.glucose} mg/dL
+                                                        {displayGlucose(reading.glucose, preferences?.glucoseUnit || 'mg/dL')} {preferences?.glucoseUnit || 'mg/dL'}
                                                     </div>
                                                     <div className="text-sm font-bold">
                                                         {reading.time} | {reading.timestamp.toLocaleDateString()} {reading.timestamp.toLocaleTimeString()}

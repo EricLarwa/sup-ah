@@ -34,11 +34,40 @@ const SettingsPage = () => {
     });
 
     const [activeTab, setActiveTab] = useState<'track' | 'log' | 'stats'>('track');
+    const [saving, setSaving] = useState(false);
+    const [saveSuccess, setSaveSuccess] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
+
+    const savePreferences = async (newSettings: Settings) => {
+        setSaving(true);
+        setSaveSuccess(false);
+        setSaveError(null);
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            setSaveError("No user found. Cannot save preferences.");
+            setSaving(false);
+            return;
+        }
+        const userId = user.id;
+        const { error } = await supabase
+            .from('user_preferences')
+            .upsert([{ user_id: userId, ...newSettings }], { onConflict: 'user_id' });
+
+        setSaving(false);
+
+        if (error) {
+            setSaveError(`Failed to save preferences`);
+            setSaveSuccess(false);
+        } else {
+            setSaveSuccess(true);
+        }
+    };
 
     const handleSettingChange = (key: keyof Settings, value: any) => {
         setSettings(prevSettings => ({
             ...prevSettings,
-            [key]: value,
+            [key]: value
         }));
     };
 
@@ -64,10 +93,31 @@ const SettingsPage = () => {
         }));
     }
 
+    useEffect(() => {
+        const fetchPreferences = async () => {
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+            const { data, error } = await supabase
+                .from('user_preferences')
+                .select('*')
+                .eq('user_id', user.id)
+                .single();
+            if (data) {
+                setSettings(prev => ({
+                    ...prev,
+                    ...data,
+                    reminderTime: Array.isArray(data.reminderTime) ? data.reminderTime : [],
+                }));
+            }
+        };
+        fetchPreferences();
+    }, []);
+
     return (
         <>
         <DashNav activeTab={activeTab} setActiveTab={setActiveTab} />
-            <div className="max-w-6xl mx-auto p-5 bg-[#f5eddf] text-black min-h-screen">
+            <div className="max-w-full mx-auto p-5 bg-[#f5eddf] text-black min-h-screen">
                 <div className="bg-black text-white p-5 mb-8 border-4 border-black shadow-[8px_8px_0px_#333]">
                     <h1 className="text-4xl font-black uppercase tracking-wider">SETTINGS</h1>
                 </div>
@@ -86,12 +136,7 @@ const SettingsPage = () => {
                                 </label>
                                 <select
                                     value={settings.glucoseUnit}
-                                    onChange={(e) => {
-                                        const value = parseInt(e.target.value);
-                                        if(!isNaN(value)) {
-                                            handleSettingChange('glucoseUnit', e.target.value as 'mg/dL' | 'mmol/L');
-                                        }
-                                    }}
+                                    onChange={(e) => handleSettingChange('glucoseUnit', e.target.value as 'mg/dL' | 'mmol/L')}
                                     className="w-full p-4 border-3 border-black bg-white font-mono text-lg font-bold focus:outline-none focus:shadow-[4px_4px_0px_black]"
                                 >
                                     <option value="mg/dL">mg/dL</option>
@@ -230,6 +275,23 @@ const SettingsPage = () => {
                     EMAIL REPORT
                 </button>
                 </div>
+            </div>
+
+            {/* Add Save Preferences button below your settings sections */}
+            <div className="flex justify-end mt-8">
+                <button
+                    onClick={() => savePreferences(settings)}
+                    disabled={saving}
+                    className="bg-black text-white px-6 py-3 rounded-md font-bold border-2 border-black shadow-[4px_4px_0px_black] hover:bg-gray-800 transition-all"
+                >
+                    {saving ? "Saving..." : "Save Preferences"}
+                </button>
+                {saveError && (
+                    <span className="ml-4 text-red-600 font-bold">{saveError}</span>
+                )}
+                {saveSuccess && (
+                    <span className="ml-4 text-green-600 font-bold">Preferences saved!</span>
+                )}
             </div>
         </div>
     </>
