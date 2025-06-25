@@ -64,7 +64,7 @@ const SettingsPage = () => {
         }
     };
 
-    const handleSettingChange = (key: keyof Settings, value: any) => {
+    const handleSettingChange = <K extends keyof Settings>(key: K, value: Settings[K]) => {
         setSettings(prevSettings => ({
             ...prevSettings,
             [key]: value
@@ -98,7 +98,7 @@ const SettingsPage = () => {
             const supabase = createClient();
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
-            const { data, error } = await supabase
+            const { data } = await supabase
                 .from('user_preferences')
                 .select('*')
                 .eq('user_id', user.id)

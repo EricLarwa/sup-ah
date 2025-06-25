@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Shield, Palette, Clock, User, Database } from 'lucide-react';
+import { User } from 'lucide-react';
 
 import DashNav from "@/app/(Dashboard)/utils/DashNav";
 import { createClient } from '@/lib/client';
@@ -37,14 +37,14 @@ function Profile() {
     useEffect(() => {
         async function fetchProfile() {
             // Always get the current user from Supabase Auth
-            const { data: { user }, error: userError } = await supabase.auth.getUser();
+            const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
                 setProfile(prev => ({ ...prev, id: '' }));
                 return;
             }
 
             // Fetch profile data using the user's id
-            const { data, error } = await supabase
+            const { data } = await supabase
                 .from('profiles')
                 .select('*')
                 .eq('id', user.id)
@@ -66,12 +66,12 @@ function Profile() {
     const [activeTab, setActiveTab] = useState<'track' | 'log' | 'stats'>('track');
     const [isEditing, setIsEditing] = useState(false);
 
-    const handleProfileChange = (key: keyof UserProfile, value: any) => {
+    const handleProfileChange = <K extends keyof UserProfile>(key: K, value: UserProfile[K]) => {
         setProfile(prev => ({ ...prev, [key]: value }));
     };
 
     const handleSaveProfile = async () => {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        const { data: { user } } = await supabase.auth.getUser();
         
         if (!user) {
             alert('User not authenticated');
@@ -81,10 +81,11 @@ function Profile() {
         // Always use the authenticated user's ID
         const profileToSave = {
             ...profile,
-            id: user.id // Force the ID to match the authenticated user
-        };
+            id: user.id 
+        }
+            ;
         
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from('profiles')
             .upsert(profileToSave, { onConflict: 'id' })
             .single();
@@ -179,7 +180,7 @@ function Profile() {
                         </label>
                         <select
                         value={profile.diabetesType}
-                        onChange={(e) => handleProfileChange('diabetesType', e.target.value)}
+                        onChange={(e) => handleProfileChange('diabetesType', e.target.value as UserProfile['diabetesType'])}
                         disabled={!isEditing}
                         className={`w-full p-4 border-3 border-black font-mono text-lg font-bold focus:outline-none focus:shadow-[4px_4px_0px_black] ${isEditing ? 'bg-white' : 'bg-gray-100'}`}
                         >

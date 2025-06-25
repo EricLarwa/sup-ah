@@ -3,7 +3,6 @@
 // Features Dropdown
 // UI Component -- Dropdown menu displaying web features 
 
-import Link from "next/link";
 import { Dispatch, SetStateAction, useState } from 'react';
 
 import { useRouter } from "next/navigation";

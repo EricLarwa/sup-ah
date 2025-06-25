@@ -1,5 +1,4 @@
 import { DM_Sans } from "next/font/google";
-import Navbar from "./page";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",

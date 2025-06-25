@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 import { signInWithOauth, handleLogin, handleLogout, getCurrentUser, handleSignUp  } from "./utils/authUtil"
 import { useRouter } from "next/navigation";
 
+import { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/client";
 
 export default function AuthPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoggedIn, setIsLoggedIn] = useState(true);
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<User | null | undefined>(null);
 
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(true);
@@ -89,7 +90,7 @@ export default function AuthPage() {
     }
 
     if (user) {
-        const timeoutId = setTimeout(() => {
+        setTimeout(() => {
             router.push("/dashboard");
         }, 2000);
         return (

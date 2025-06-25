@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect } from 'react'
 import { useSearchParams } from "next/navigation";
 
 import { calculateStats, getGlucoseCategory } from '../utils/DashUtils';
@@ -11,7 +11,6 @@ import { Line as ChartLine, Bar } from 'react-chartjs-2';
 
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/client';
-import { Session } from '@supabase/supabase-js'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
 
@@ -60,7 +59,7 @@ export default function Dashboard() {
                 .eq('user_id', userId)
                 .order('timestamp', { ascending: false });
             if (!error && data) {
-                setReadings(data.map((r: any) => ({
+                setReadings(data.map((r: Reading) => ({
                     ...r,
                     timestamp: new Date(r.timestamp),
                     category: getGlucoseCategory(r.glucose)

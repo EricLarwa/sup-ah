@@ -7,7 +7,7 @@ interface DashNavProps {
     setActiveTab: React.Dispatch<React.SetStateAction<'track' | 'log' | 'stats'>>;
 }
 
-const DashNav: React.FC<DashNavProps> = ({activeTab, setActiveTab}) => {
+const DashNav: React.FC<DashNavProps> = ({setActiveTab}) => {
     return (
         <nav className="w-full bg-white  p-4 shadow-md border-2 b border-black stroke-200 ">
             <div className="container mx-auto flex items-center justify-between">

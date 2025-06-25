@@ -1,11 +1,11 @@
 // Login and signup utility functions
-
+import type { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/client';
 
 export interface AuthResponse {
     success?: boolean;
     error?: string;
-    user?: any;
+    user?: User | null;
 }
 
 export async function handleSignUp(email: string, password: string): Promise<AuthResponse> {
@@ -68,7 +68,7 @@ export async function getCurrentUser(): Promise<AuthResponse> {
 export async function signInWithOauth(provider: 'google' ): Promise<AuthResponse> {
     const supabase = createClient();
 
-  const { data, error } = await supabase.auth.signInWithOAuth({
+  const { error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
       redirectTo: `${window.location.origin}/auth/callback`
