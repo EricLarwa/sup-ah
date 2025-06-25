@@ -9,6 +9,7 @@ import { createClient } from '@/lib/client';
 const supabase = createClient();
 
 interface UserProfile {
+  id: string; 
   name: string;
   email: string;
   age: number;
@@ -19,8 +20,9 @@ interface UserProfile {
   emergencyContact: string;
 }
 
-const Profile: React.FC = () => {
+function Profile() {
     const [profile, setProfile] = useState<UserProfile>({
+        id: '', // Initialize id
         name: '',
         email: '',
         age: 0,
@@ -34,19 +36,29 @@ const Profile: React.FC = () => {
     // Fetch profile from Supabase on mount
     useEffect(() => {
         async function fetchProfile() {
-            // Get current user
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
+            // Always get the current user from Supabase Auth
+            const { data: { user }, error: userError } = await supabase.auth.getUser();
+            if (!user) {
+                setProfile(prev => ({ ...prev, id: '' }));
+                return;
+            }
 
-            // Fetch profile data
+            // Fetch profile data using the user's id
             const { data, error } = await supabase
                 .from('profiles')
                 .select('*')
                 .eq('id', user.id)
                 .single();
 
-            if (data) setProfile(data as UserProfile);
-            // Optionally handle error
+            if (data) {
+                setProfile({
+                    ...data,
+                    id: user.id,
+                    medications: Array.isArray(data.medications) ? data.medications : [],
+                } as UserProfile);
+            } else {
+                setProfile(prev => ({ ...prev, id: user.id }));
+            }
         }
         fetchProfile();
     }, []);
@@ -58,10 +70,37 @@ const Profile: React.FC = () => {
         setProfile(prev => ({ ...prev, [key]: value }));
     };
 
+    const handleSaveProfile = async () => {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        
+        if (!user) {
+            alert('User not authenticated');
+            return;
+        }
+        
+        // Always use the authenticated user's ID
+        const profileToSave = {
+            ...profile,
+            id: user.id // Force the ID to match the authenticated user
+        };
+        
+        const { data, error } = await supabase
+            .from('profiles')
+            .upsert(profileToSave, { onConflict: 'id' })
+            .single();
+            
+        if (error) {
+            console.error('Error updating profile:', error);
+        } else {
+            setIsEditing(false);
+            alert('Profile saved successfully!');
+        }
+    };
+
     return (
         <>
             <DashNav activeTab={activeTab} setActiveTab={setActiveTab} />
-            <div className="max-w-6xl mx-auto p-5 bg-[#f5eddf] min-h-screen">
+            <div className=" mx-auto p-5 bg-[#f5eddf] min-h-screen">
                 <div className="bg-black text-white p-5 mb-8 border-4 border-black shadow-[8px_8px_0px_#333]">
                     <h1 className="text-4xl font-black uppercase tracking-wider">ACCOUNT</h1>
                 </div>
@@ -75,7 +114,14 @@ const Profile: React.FC = () => {
                         PROFILE INFORMATION
                     </h2>
                     <button
-                        onClick={() => setIsEditing(!isEditing)}
+                        onClick={async () => {
+                            if (isEditing) {
+                                await handleSaveProfile();
+                                setIsEditing(false);
+                            } else {
+                                setIsEditing(true);
+                            }
+                        }}
                         className={`
                         border-4 border-black px-6 py-3 font-mono font-bold uppercase
                         shadow-[4px_4px_0px_black] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_black]
@@ -95,12 +141,7 @@ const Profile: React.FC = () => {
                         <input
                         type="text"
                         value={profile.name}
-                        onChange={(e) => {
-                            const value = parseInt(e.target.value)
-                            if (!isNaN(value)) {
-                                handleProfileChange('name', e.target.value);
-                            }
-                        }}
+                        onChange={(e) => handleProfileChange('name', e.target.value)}
                         disabled={!isEditing}
                         className={`w-full p-4 border-3 border-black font-mono text-lg font-bold focus:outline-none focus:shadow-[4px_4px_0px_black] ${isEditing ? 'bg-white' : 'bg-gray-100'}`}
                         />
