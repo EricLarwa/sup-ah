@@ -15,7 +15,7 @@ const Card = ({ img, title, description, link, features}: CardProps) => {
             <a href={link} className="block cursor-pointer">
                 <article className="w-full h-full">
                     <figure className="w-full h-1/2 border-black border-b-3">
-                        <Image
+                        <img 
                         src={img}
                         alt="thumbnail"
                         className="w-300 h-60 object-cover rounded-t-md"
