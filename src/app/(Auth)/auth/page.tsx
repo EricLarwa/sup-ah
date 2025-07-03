@@ -18,20 +18,6 @@ export default function AuthPage() {
 
     useEffect(() => {
         const runAsync = async () => {
-            console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
-            console.log('Supabase Anon Key:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
-
-            const testConnection = async () => {
-                try {
-                    const supabase = createClient();
-                    const { data, error } = await supabase.auth.getSession()
-                    console.log('Supabase connection test:', data, error);
-                } catch (error) {
-                    console.log('connection error:', error);
-                }
-            }
-            await testConnection();
-
             const checkUser = async() => {
                 const response = await getCurrentUser();
                 if(response.error){

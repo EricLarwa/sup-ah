@@ -14,26 +14,42 @@ export default function Landing() {
           <GetStarted />
         </div>
       </div>
-      <div className="flex flex-col min-h-screen items-center bg-[#f5eddf] p-8">
-        <div className="flex flex-row flex-wrap justify-center gap-8 mb-8">
+      <div className="flex flex-col min-h-screen items-center bg-[#f5eddf] p-4 sm:p-8">
+        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-6 sm:gap-8 mb-8 w-full">
           <Card 
           img="Tracking.png"
           title="Quick and Easy Tracking"
           description="Track your glucose readings and reconds current trends with ease."
           link=""
-          features={["Mealtime Blood Sugar Readings", "View your trends in real-time", "Keep your blood sugar in your control"]}/>
+          features={[
+            "Mealtime Blood Sugar Readings",
+            "View your trends in real-time",
+            "Keep your blood sugar in your control"
+          ]}
+          />
           <Card 
           img="stats.png"
           title="Understanding Your Stats Is Easy"
           description="View your glucose readings in a simple and easy to understand way."
           link=""
-          features={["View your time in range", "understand when you have highs", "keep track of your blood sugar conditions"]}/>
+          features={[
+            "View your time in range",
+            "understand when you have highs",
+            "keep track of your blood sugar conditions"
+          ]}
+          />
           <Card 
           img="logging.png"
           title="Quick and Simple Logging"
           description="fast and easy logging of your glucose readings, with no hassle."
           link=""
-          features={["Log your blood sugar effeciently", "Quick add methods", "Adjust logging to the time of day", "adjusts to MG/DL and MMOL/L"]}/>
+          features={[
+            "Log your blood sugar effeciently",
+            "Quick add methods",
+            "Adjust logging to the time of day",
+            "adjusts to MG/DL and MMOL/L"
+          ]}
+          />
         </div>
       </div>
       {/* Splitter Section */}

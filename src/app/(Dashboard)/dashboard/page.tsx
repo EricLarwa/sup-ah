@@ -20,7 +20,6 @@ function displayGlucose(value: number, unit: 'mg/dL' | 'mmol/L') {
         : value;
 }
 
-// Extract the component that uses useSearchParams
 function DashboardContent() {
     const searchParams = useSearchParams();
     const initialTab = (searchParams.get("tab") as 'track' | 'log' | 'stats') || 'track';
